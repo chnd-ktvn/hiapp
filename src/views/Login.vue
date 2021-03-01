@@ -1,6 +1,6 @@
 <template>
   <b-row class="login">
-    <b-col lg="4" md="3" sm="4"> </b-col>
+    <b-col lg="4" md="3" sm="3"> </b-col>
     <b-col lg="4" md="6" sm="6" class="b">
       <Register v-if="status_reg" />
       <b-container v-else>
@@ -39,6 +39,7 @@
           </b-form-group>
           <p
             style="margin-bottom: 3vh; text-align: right; color: #007bff; cursor: pointer;"
+            @click="onComing"
           >
             Forgot password?
           </p>
@@ -62,7 +63,7 @@
                     color: black;
                     border-color: #007bff;
                     margin-bottom: 3vh;"
-            @click="onGoogle"
+            @click="onComing"
             >Google</b-button
           >
           <p style="text-align: center;">
@@ -104,7 +105,6 @@ export default {
         .then(result => {
           this.message = result.data.message
           this.$swal.fire({
-            position: 'top-end',
             icon: 'success',
             title:
               '<span style="font-family: cursive;">' + this.message + '<span>',
@@ -116,7 +116,6 @@ export default {
         .catch(error => {
           this.message = error.response.data.message
           this.$swal.fire({
-            position: 'top-end',
             icon: 'error',
             title:
               '<span style="font-family: cursive;">' + this.message + '<span>',
@@ -129,9 +128,8 @@ export default {
     onRegister() {
       this.statusRegister()
     },
-    onGoogle() {
+    onComing() {
       this.$swal.fire({
-        position: 'top-end',
         icon: 'error',
         title: '<span style="font-family: cursive;">Coming soon!<span>',
         showConfirmButton: false,

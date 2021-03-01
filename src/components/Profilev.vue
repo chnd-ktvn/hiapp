@@ -1,5 +1,7 @@
 <template>
   <b-container>
+    <!-- <div v-for="(item, index) in profile" :key="index"> -->
+    <!-- <p>{{ user.user_id }}</p> -->
     <div
       style="display: flex; justify-content: left;
       align-items: flex-start;"
@@ -18,9 +20,9 @@
       <b-img
         v-if="showPhoto"
         :src="
-          profile.user_photo === '' || profile.user_photo === undefined
+          profile.photo === '' || profile.photo === undefined
             ? require('./../assets/cat-hi.png')
-            : `${env}/` + profile.user_photo
+            : profile.photo
         "
         class="preview"
       ></b-img>
@@ -49,6 +51,16 @@
           <input type="file" @change="editPhoto" v-show="show" />
         </label>
       </div>
+      <!-- <b-input
+        v-model="form.user_fullname"
+        style="border: none; width: 60%; margin: 0 auto; text-align: center; font-weight: bold; color: black;"
+        :placeholder="
+          profile.user_fullname ? profile.user_fullname : 'Your fullname'
+        "
+      ></b-input> -->
+      <!-- <p style="margin: 0 auto 3vh auto; text-align: center; color: grey">
+        {{ profile.user_name }}
+      </p> -->
       <p style="font-weight: 600; color: black;">Account</p>
       <b-input-group v-b-tooltip.hover title="Username" size="sm" class="mb-2">
         <b-input-group-prepend is-text>
@@ -87,6 +99,17 @@
           placeholder="Phone Number"
         ></b-form-input>
       </b-input-group>
+      <!-- <b-input-group v-b-tooltip.hover title="Email" size="sm" class="mb-2">
+        <b-input-group-prepend v-b-tooltip.hover title="Email Address" is-text>
+          <b-icon-envelope-fill style="color: #007bff;"></b-icon-envelope-fill>
+        </b-input-group-prepend>
+        <b-form-input
+          v-model="profile.user_email"
+          type="email"
+          placeholder="Email Address"
+          disabled
+        ></b-form-input>
+      </b-input-group> -->
       <b-input-group v-b-tooltip.hover title="Bio" size="sm" class="mb-2">
         <b-input-group-prepend is-text>
           <b-icon-book-half style="color: #007bff;"></b-icon-book-half>
@@ -97,10 +120,39 @@
           placeholder="Bio"
         ></b-form-textarea>
       </b-input-group>
-      <b-button style="margin: 5vh 0;" @click="onEdit" pill>Edit data</b-button>
-      <p style="font-weight: 600; color: black;">
-        Location
-      </p>
+
+      <!-- <b-input
+        id="inputPhone"
+        v-model="form.user_phone"
+        style="border: none; width: 50%; margin-bottom: 1vh; font-weight: bold; color: black;"
+        :placeholder="
+          profile.user_phone ? profile.user_phone : 'Your phone number'
+        "
+      ></b-input> -->
+      <!-- <label for="inputPhone" style="color: #007bff; margin-bottom: 3vh;"
+        >Tap to change phone number</label
+      > -->
+      <!-- <hr style="background-color: lightgrey;" /> -->
+      <!-- <b-input
+        id="inputUsername"
+        v-model="form.user_name"
+        style="border: none; width: 50%; font-weight: bold; color: black;"
+        :placeholder="profile.user_name ? profile.user_name : 'Your username'"
+      ></b-input> -->
+      <!-- <label for="inputUsername" style="color: grey; margin-bottom: 2vh;"
+        >Username</label
+      > -->
+      <!-- <hr style="background-color: lightgrey;" /> -->
+      <!-- <b-input
+        id="inputUserbio"
+        v-model="form.user_bio"
+        style="border: none; width: 50%; font-weight: bold; color: black;"
+        :placeholder="profile.user_bio ? profile.user_bio : 'Your bio'"
+      ></b-input> -->
+      <!-- <label for="inputUserbio" style="color: grey; margin-bottom: 5vh;"
+        >Bio</label
+      > -->
+      <p style="font-weight: 600; color: black;">Location</p>
       <GmapMap
         :center="location"
         :zoom="10"
@@ -121,17 +173,16 @@
       align-items: flex-start;"
       >
         <b-icon-lock style="color: #007bff;"></b-icon-lock>
-        <p
-          style="margin-left: 15px; color: gray; cursor: pointer;"
-          @click="onPrivacy"
-        >
+        <p style="margin-left: 15px; color: gray;">
           Privacy and Security
         </p>
       </div>
     </b-form>
-    <!-- <b-button style="margin: 5vh 0;" @click="onEdit" block pill
+    <b-button style="margin: 5vh 0;" @click="onEdit" block pill
       >Edit data</b-button
-    > -->
+    >
+    <!-- <h1>{{ profile }}</h1> -->
+    <!-- </div> -->
   </b-container>
 </template>
 <script>
@@ -140,12 +191,18 @@ export default {
   name: 'Profile',
   data() {
     return {
-      env: process.env.VUE_APP_BASE_URL,
       image: '',
       show: false,
       showPhoto: true,
       message: null,
-      statusDelete: false
+      statusDelete: false,
+      form: {
+        user_name: '',
+        user_phone: '',
+        user_bio: '',
+        user_fullname: '',
+        user_photo: ''
+      }
     }
   },
   computed: {
@@ -159,6 +216,7 @@ export default {
   },
   created() {
     this.showProfile(this.user.user_id)
+    // console.log(this.user.user_id)
   },
   methods: {
     ...mapActions(['showProfile', 'editProfile', 'deletePhotoProfile']),
@@ -175,10 +233,6 @@ export default {
         lng: position.latLng.lng()
       }
     },
-    onPrivacy() {
-      this.message = 'Coming Soon'
-      this.alert()
-    },
     editPhoto(e) {
       this.showPhoto = false
       const allowedTypes = ['image/jpeg', 'image/jpg', 'image/png']
@@ -193,31 +247,28 @@ export default {
         this.alert()
       } else {
         console.log('ini yang oke inputan file')
-        this.profile.user_photo = e.target.files[0]
+        this.form.user_photo = e.target.files[0]
       }
     },
     onDelete() {
       this.showPhoto = false
       this.image = this.statusPhoto
-      console.log(this.profile.user_id)
-      this.deletePhotoProfile(this.profile.user_id)
-        .then(result => {
-          this.message = result.data.message
-          this.$swal.fire({
-            icon: 'success',
-            title:
-              '<span style="font-family: cursive;">' + this.message + '<span>',
-            showConfirmButton: false,
-            timer: 2000
-          })
-        })
-        .catch(error => {
-          this.message = error.response.data.message
-          this.alert()
-        })
+      this.statusDelete = true
     },
     onEdit() {
-      this.post()
+      console.log('tertrigger')
+      if (!this.statusDelete) {
+        this.post()
+        this.statusDelete = false
+      } else {
+        console.log('else')
+        this.post()
+        const dataPayload = {}
+        dataPayload.user_id = this.user.user_id
+        dataPayload.data = this.user.user_email
+        this.deletePhotoProfile(dataPayload)
+        this.statusDelete = false
+      }
     },
     alert() {
       this.$swal.fire({
@@ -228,14 +279,24 @@ export default {
       })
     },
     post() {
-      const {
-        user_name,
-        user_phone,
-        user_bio,
-        user_fullname,
-        user_photo,
-        user_email
-      } = this.profile
+      this.form.user_name === ''
+        ? (this.form.user_name = this.profile[0].user_name)
+        : this.form.user_name
+
+      this.form.user_phone === ''
+        ? (this.form.user_phone = this.profile[0].user_phone)
+        : this.form.user_phone
+
+      this.form.user_bio === ''
+        ? (this.form.user_bio = this.profile[0].user_bio)
+        : this.form.user_bio
+
+      this.form.user_fullname === ''
+        ? (this.form.user_fullname = this.profile[0].user_fullname)
+        : this.form.user_fullname
+      const { user_name, user_phone, user_bio, user_fullname } = this.form
+      const user_photo = this.form.user_photo
+      const user_email = this.profile[0].user_email
 
       const data = new FormData()
       data.append('user_name', user_name)

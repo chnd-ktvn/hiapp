@@ -6,15 +6,19 @@ export default {
     user: {},
     userId: null,
     friends: [],
-    profile: [],
+    profile: {},
+    profileFriend: {},
+    dataFriend: {},
     rooms: [],
+    chats: [],
     photo: '',
     image: '',
     coordinate: {},
     token: localStorage.getItem('token') || null,
     status_reg: false,
     status_list: false,
-    status_profile: false
+    status_profile: false,
+    status_right: false
   },
   mutations: {
     setUser(state, payload) {
@@ -25,14 +29,7 @@ export default {
       state.friends = payload.data
     },
     setProfile(state, payload) {
-      state.profile = payload.data
-      state.userId = payload.data[0].user_id
-      state.photo = payload.data[0].user_photo
-      if (payload.data[0].user_photo === '') {
-        state.photo = ''
-      } else {
-        state.photo = 'http://localhost:3010/' + payload.data[0].user_photo
-      }
+      state.profile = payload.data[0]
     },
     setLocation(state, payload) {
       state.coordinate = payload
@@ -40,10 +37,29 @@ export default {
     setRoom(state, payload) {
       state.rooms = payload.data
     },
+    setChat(state, payload) {
+      state.chats = payload.data
+      console.log(state.chats)
+    },
+    setdataFriend(state, payload) {
+      state.dataFriend = payload
+      console.log(state.dataFriend)
+    },
+    setProfileFriend(state, payload) {
+      state.profileFriend = payload.data[0]
+      console.log(state.profileFriend)
+    },
     delUser(state) {
       state.user = {}
+      state.rooms = [],
+      state.chats = [],
+      state.profileFriend = {},
+      state.dataFriend = {}
       state.userId = null
       state.token = null
+      state.status_right = false
+      state.profile = {}
+      state.friends = []
     },
     statusRegister(state) {
       state.status_reg = !state.status_reg
@@ -62,6 +78,13 @@ export default {
     },
     statusHome(state) {
       state.status_profile = false
+    },
+    //status_right
+    statusLeftPart(state) {
+      state.status_right = false
+    },
+    statusRightPart(state) {
+      state.status_right = true
     }
   },
   actions: {
@@ -91,6 +114,18 @@ export default {
           })
       })
     },
+    activationEmail(context, payload) {
+      return new Promise((resolve, reject) => {
+        axios
+          .patch(`${process.env.VUE_APP_BASE_URL}/user/activation`, payload)
+          .then(result => {
+            resolve(result)
+          })
+          .catch(err => {
+            reject(err)
+          })
+      })
+    },
     editLocation(context, payload) {
       console.log(payload)
       return new Promise((resolve, reject) => {
@@ -117,7 +152,8 @@ export default {
             payload.data
           )
           .then(result => {
-             resolve(result)
+            // context.dispatch('showProfile', payload.user_id)
+            resolve(result)
           })
           .catch(error => {
             reject(error)
@@ -127,10 +163,7 @@ export default {
     deletePhotoProfile(context, payload) {
       return new Promise((resolve, reject) => {
         axios
-          .patch(
-            `${process.env.VUE_APP_BASE_URL}/user/deletephoto/${payload.user_id}`,
-            payload.data
-          )
+          .patch(`${process.env.VUE_APP_BASE_URL}/user/deletephoto/${payload}`)
           .then(result => {
             resolve(result)
           })
@@ -177,12 +210,39 @@ export default {
           })
       })
     },
+    // setProfileFriend
+    showProfileFriend(context, payload) {
+      return new Promise((resolve, reject) => {
+        axios
+          .get(`${process.env.VUE_APP_BASE_URL}/user/profile/${payload}`)
+          .then(result => {
+            context.commit('setProfileFriend', result.data)
+            resolve(result)
+          })
+          .catch(error => {
+            reject(error)
+          })
+      })
+    },
     showRoom(context, payload) {
       return new Promise((resolve, reject) => {
         axios
-          .get(`${process.env.VUE_APP_BASE_URL}/room/getRoom/${payload}`)
+          .get(`${process.env.VUE_APP_BASE_URL}/room/getroom/${payload}`)
           .then(result => {
             context.commit('setRoom', result.data)
+            resolve(result)
+          })
+          .catch(error => {
+            reject(error)
+          })
+      })
+    },
+    showChat(context, payload) {
+      return new Promise((resolve, reject) => {
+        axios
+          .get(`${process.env.VUE_APP_BASE_URL}/room/getchat/${payload}`)
+          .then(result => {
+            context.commit('setChat', result.data)
             resolve(result)
           })
           .catch(error => {
@@ -240,7 +300,8 @@ export default {
             error.response.data.status === 403 &&
             (error.response.data.message === 'invalid token' ||
               error.response.data.message === 'invalid signature' ||
-              error.response.data.message === 'jwt expired')
+              error.response.data.message === 'jwt expired' ||
+              error.response.data.message === 'jwt malformed')
           ) {
             context.dispatch('logout')
           }
@@ -265,6 +326,9 @@ export default {
     statusProfile(state) {
       return state.status_profile
     },
+    statusLeftPart(state) {
+      return state.status_right
+    },
     dataUser(state) {
       return state.user
     },
@@ -274,8 +338,18 @@ export default {
     dataProfile(state) {
       return state.profile
     },
+    // state.profileFriend
+    dataProfileFriends(state) {
+      return state.profileFriend
+    },
+    dataProfileFriend(state) {
+      return state.dataFriend
+    },
     dataRoom(state) {
       return state.rooms
+    },
+    dataChat(state) {
+      return state.chats
     },
     dataPhoto(state) {
       return state.photo

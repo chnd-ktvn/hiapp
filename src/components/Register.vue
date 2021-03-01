@@ -104,7 +104,6 @@ export default {
         .then(result => {
           this.message = result.data.message
           this.$swal.fire({
-            position: 'top-end',
             icon: 'success',
             title:
               '<span style="font-family: cursive;">' + this.message + '<span>',
@@ -116,7 +115,6 @@ export default {
         .catch(error => {
           this.message = error.response.data.message
           this.$swal.fire({
-            position: 'top-end',
             icon: 'error',
             title:
               '<span style="font-family: cursive;">' + this.message + '<span>',
@@ -131,7 +129,6 @@ export default {
     },
     onGoogle() {
       this.$swal.fire({
-        position: 'top-end',
         icon: 'error',
         title: '<span style="font-family: cursive;">Coming soon!<span>',
         showConfirmButton: false,

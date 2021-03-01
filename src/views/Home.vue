@@ -4,57 +4,45 @@
       <Profile v-if="status_profile" />
       <b-container v-else>
         <div
-          style="display: flex; justify-content: center; align-items: flex-start;"
+          style="display: flex;   justify-content: space-evenly; align-items: flex-start;"
         >
-          <h4
-            style="text-align: center; color: #007bff; margin: 0 auto 0 0; margin-bottom: 5vh; "
-          >
+          <h5 style=" color: #007bff; margin: 0 auto 0 0; margin-bottom: 5vh; ">
             Hi App
-          </h4>
+          </h5>
           <b-dropdown variant="outline-primary" offset="-100">
             <template #button-content>
               <b-icon-menu-button-wide></b-icon-menu-button-wide>
             </template>
             <b-dropdown-item style="padding-bottom: 2vh;" @click="onSettings"
               ><b-icon-gear style="color: #007bff;"></b-icon-gear
-              ><span style="color: #007bff; padding-left: 2vh"
-                >Settings</span
-              ></b-dropdown-item
+              ><span>Settings</span></b-dropdown-item
             >
             <b-dropdown-item style="padding-bottom: 2vh;" @click="onContact"
               ><b-icon-person style="color: #007bff;"></b-icon-person
-              ><span style="color: #007bff; padding-left: 2vh"
-                >Contacts</span
-              ></b-dropdown-item
+              ><span>Contacts</span></b-dropdown-item
             >
             <b-dropdown-item style="padding-bottom: 2vh;" @click="onInvite"
               ><b-icon-person-plus-fill
                 style="color: #007bff;"
               ></b-icon-person-plus-fill>
-              <span style="color: #007bff; padding-left: 2vh">
-                Invite friends
-              </span>
+              <span>Invite friends</span>
             </b-dropdown-item>
             <b-dropdown-item style="padding-bottom: 2vh;" @click="onQuestion"
               ><b-icon-question-circle
                 style="color: #007bff;"
               ></b-icon-question-circle
-              ><span style="color: #007bff; padding-left: 2vh">
-                Hi App FAQ</span
-              ></b-dropdown-item
+              ><span>Hi App FAQ</span></b-dropdown-item
             >
             <b-dropdown-item @click="onLogout"
               ><b-icon-arrow-bar-left
                 style="color: #007bff;"
               ></b-icon-arrow-bar-left
-              ><span style="color: #007bff; padding-left: 2vh">
-                Logout</span
-              ></b-dropdown-item
+              ><span>Logout</span></b-dropdown-item
             >
           </b-dropdown>
         </div>
         <div
-          style="display: flex; justify-content: space-between; align-items: center;"
+          style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #007bff;"
         >
           <b-form-input
             v-model="search.text"
@@ -70,49 +58,135 @@
         </div>
 
         <ListFriends v-if="status_list" />
-        <b-list-group v-for="(item, index) in rooms" :key="index" v-else>
-          <b-list-group-item class="d-flex align-items-center">
-            <b-avatar
-              style="background-color: lightgrey;"
-              :src="
-                item.user_photo === ''
-                  ? require('./../assets/account.png')
-                  : `http://localhost:3010/` + item.user_photo
+        <div v-else>
+          <b-card
+            v-if="rooms.length === 0"
+            style="padding: 5vh 0; border: none;"
+          >
+            <p style="text-align: center;">
+              Click icon<span style="color: #007bff;">+</span> to start the
+              chat.
+            </p>
+          </b-card>
+          <b-list-group v-for="(item, index) in rooms" :key="index" v-else>
+            <b-list-group-item
+              class="d-flex align-items-center list"
+              @click="
+                selectRoom(
+                  item.id_room_gen,
+                  item.sender,
+                  item.receiver,
+                  item.user_name,
+                  item.user_photo
+                )
               "
-              class="mr-3"
-              rounded="lg"
-            ></b-avatar>
-            <span
-              class="mr-auto"
-              @click="selectRoom(item.id_room_gen, item.sender, item.receiver)"
-              >{{ item.user_name }}</span
             >
-            <!-- <p>{{ item.id_room_gen }}</p> -->
-          </b-list-group-item>
-        </b-list-group>
+              <b-avatar
+                :src="
+                  item.user_photo === ''
+                    ? require('./../assets/cat-hi.png')
+                    : `http://localhost:3010/` + item.user_photo
+                "
+                class="mr-3 avatar"
+                rounded="lg"
+              ></b-avatar>
+
+              <p class="mr-auto span">{{ item.user_name }}</p>
+            </b-list-group-item>
+          </b-list-group>
+        </div>
       </b-container>
     </b-col>
     <b-col lg="8" md="8" sm="8" class="b">
-      <div class="chat">
-        <div class="chat-window">
+      <div class="chat" v-if="status_left">
+        <div class="chat-windows">
           <div class="output">
-            <!-- <p v-if="typing.isTyping">
-              <em>{{ typing.username }} is typing a message...</em>
-            </p> -->
-            <p v-for="(value, index) in messages" :key="index">
-              <strong>{{ value.username }} :</strong>
-              {{ value.msg }}
-            </p>
+            <b-navbar variant="faded" type="light" class="wrapper">
+              <b-navbar-brand>
+                <b-img
+                  :src="
+                    chat.photo === ''
+                      ? require('./../assets/cat-hi.png')
+                      : `http://localhost:3010/` + chat.photo
+                  "
+                  class="img"
+                ></b-img>
+                <span>{{ chat.user_name }}</span>
+              </b-navbar-brand>
+              <b-navbar-nav class="ml-auto">
+                <b-nav-item-dropdown right>
+                  <template #button-content><em> </em></template>
+                  <b-dropdown-item v-b-toggle.sidebar-right
+                    ><span>View Contact</span></b-dropdown-item
+                  >
+                </b-nav-item-dropdown>
+              </b-navbar-nav>
+            </b-navbar>
+            <b-sidebar id="sidebar-right" right shadow>
+              <ProfileFriend />
+            </b-sidebar>
+            <b-col v-for="(value, index) in chats" :key="index">
+              <b-row>
+                <b-col
+                  v-if="value.id_sender !== chat.id_sender"
+                  class="chat-left"
+                >
+                  <b-card class="card-left">
+                    <p>{{ value.msg }}</p>
+                    <p class="time left">
+                      {{ value.created_at.split('T')[1].split('.')[0] }}
+                    </p>
+                  </b-card>
+                </b-col>
+                <b-col
+                  v-if="value.id_sender === chat.id_sender"
+                  class="chat-right"
+                >
+                  <b-card class="card-right">
+                    <p>{{ value.msg }}</p>
+                    <p class="time">
+                      {{ value.created_at.split('T')[1].split('.')[0] }}
+                    </p>
+                  </b-card>
+                </b-col>
+              </b-row>
+            </b-col>
           </div>
         </div>
-        <b-input
-          class="message"
-          v-model="chat.msg"
-          type="text"
-          placeholder="Message"
-        ></b-input>
-        <b-button class="send" @click="sendMessage">Send</b-button>
-        <p>{{ messages }}</p>
+        <b-row
+          style="display: flex; justify-content: space-evenly; align-items: center;"
+        >
+          <b-col lg="11" md="11" sm="11" style="flex: 7; margin-top: 7px;">
+            <b-input
+              class="message"
+              v-model="chat.msg"
+              type="text"
+              placeholder="Type your message in here..."
+            ></b-input>
+          </b-col>
+          <b-col
+            lg="1"
+            md="1"
+            sm="1"
+            style="flex: 1; cursor: pointer;"
+            v-b-tooltip.hover
+            title="Send your message"
+            @click="sendMessage"
+          >
+            <b-icon-triangle-half
+              style="color: #007bff; margin: 0 30%;"
+              rotate="90"
+            ></b-icon-triangle-half>
+          </b-col>
+        </b-row>
+      </div>
+
+      <div
+        style="display: flex; justify-content: center; align-items: center; margin: auto 0"
+        class="chat-window"
+        v-else
+      >
+        <p style="color: grey;">Select room chat to start the conversation!</p>
       </div>
     </b-col>
   </b-row>
@@ -121,13 +195,15 @@
 <script>
 import ListFriends from '../components/ListFriends.vue'
 import Profile from '../components/Profile.vue'
+import ProfileFriend from '../components/ProfileFriend.vue'
 // import io from 'socket.io-client'
 import { mapActions, mapGetters, mapMutations } from 'vuex'
 export default {
   name: 'Home',
   components: {
     ListFriends,
-    Profile
+    Profile,
+    ProfileFriend
   },
   data() {
     return {
@@ -158,6 +234,8 @@ export default {
         id_room_gen: null,
         id_sender: null,
         id_receiver: null,
+        photo: null,
+        user_name: null,
         msg: ''
       }
     }
@@ -167,7 +245,10 @@ export default {
       user: 'dataUser',
       status_list: 'statusList',
       status_profile: 'statusProfile',
-      rooms: 'dataRoom'
+      rooms: 'dataRoom',
+      chats: 'dataChat',
+      status_left: 'statusLeftPart',
+      profileFriend: 'dataProfileFriends'
     })
   },
   created() {
@@ -177,7 +258,6 @@ export default {
           lat: coordinates.lat,
           lng: coordinates.lng
         }
-        console.log(coordinates)
         const dataPayload = {}
         dataPayload.coordinate = this.coordinate
         dataPayload.user_id = this.user.user_id
@@ -186,18 +266,30 @@ export default {
       .catch(error => {
         alert(error)
       })
+    this.statusLeftPart()
     this.statusChat()
     this.showRoom(this.user.user_id)
     this.data.user_id = this.user.user_id
+    console.log(this.data)
   },
   methods: {
     ...mapActions([
       'logout',
       'addFriend',
       'showFriend',
+      'showProfileFriend',
       'showRoom',
+      'showChat',
       'editLocation',
       'postChat'
+    ]),
+    ...mapMutations([
+      'setdataFriend',
+      'statusList',
+      'statusProfile',
+      'statusChat',
+      'statusLeftPart',
+      'statusRightPart'
     ]),
     onLogout() {
       this.logout()
@@ -207,7 +299,7 @@ export default {
         .fire({
           title: '<span style="font-family: cursive">Add Friend</span>',
           input: 'email',
-          inputLabel: 'Greet your friend on Hi App!',
+          inputLabel: 'Say hi to your friend on Hi App!',
           inputPlaceholder: "Type your friend's email!",
           confirmButtonText: '<span style="font-family: cursive;">Search</span>'
         })
@@ -246,11 +338,10 @@ export default {
     onQuestion() {
       this.$swal.fire(
         '<span style="font-family: cursive;">What is Hi App?</span>',
-        "Simple messaging app that connects people around the world with simple UI. Still curious? What are you waiting for? Let's get started!",
+        'Pronounced like high and hi, Hi APP is simple messaging app that connects people around the world with various features such as private chat.',
         'question'
       )
     },
-    ...mapMutations(['statusList', 'statusProfile', 'statusChat']),
     onContact() {
       this.showFriend(this.data.user_id).catch(error => {
         this.$swal.fire({
@@ -270,12 +361,30 @@ export default {
       this.showProfile(this.user.user_id)
       this.statusProfile()
     },
-    selectRoom(a, b, c) {
+    selectRoom(a, b, c, d, e) {
       this.chat.id_room_gen = a
       this.chat.id_sender = b
       this.chat.id_receiver = c
+      this.chat.user_name = d
+      this.chat.photo = e
+      // this.data.user_email = this.profileFriend.user_email
+      // this.addFriend(this.data).then(result => {
+      //   this.message = result.data.message
+      //   this.$swal.fire({
+      //     icon: 'success',
+      //     title:
+      //       '<span style="font-family: cursive;">' + this.message + '<span>',
+      //     showConfirmButton: false,
+      //     timer: 3000
+      //   })
+      // })
+      this.showChat(this.chat.id_room_gen)
+      this.setdataFriend(this.chat)
+      this.showProfileFriend(this.chat.id_receiver)
+      this.statusRightPart()
     },
     sendMessage() {
+      // id_room_gen, id_sender, id_receiver, msg
       this.postChat(this.chat)
       this.chat.msg = ''
     }
@@ -293,16 +402,95 @@ export default {
 .a {
   background-color: white;
   margin-top: 7vh;
+  overflow: auto;
+  height: 93vh;
+  border-bottom: 1px solid lightgray;
 }
 .b {
   background-color: lightgrey;
+}
+span {
+  color: #007bff;
+  padding-left: 2vh;
 }
 .chat {
   max-width: 100%;
 }
 .chat-window {
-  height: 90vh;
   overflow: auto;
+  height: 100vh;
   background: lightgrey;
+}
+.chat-windows {
+  overflow: auto;
+  height: 90vh;
+  background: lightgrey;
+}
+.message {
+  border-radius: 20px;
+}
+.list {
+  cursor: pointer;
+  color: #007bff;
+}
+.list:hover {
+  color: white;
+  background-color: #007bff;
+}
+.avatar {
+  background-color: transparent;
+  width: 50px;
+  height: 40px;
+  margin-left: -10px;
+}
+.img {
+  background-color: lightgrey;
+  object-fit: cover;
+  width: 45px;
+  height: 45px;
+  border-radius: 50%;
+  margin-right: 20px;
+}
+.wrapper {
+  margin-bottom: 7px;
+  z-index: 10;
+  top: 0;
+  position: sticky;
+  background-color: white;
+  border-bottom-right-radius: 20px;
+  border-bottom-left-radius: 20px;
+}
+.card-right {
+  border-top-left-radius: 20px;
+  border-bottom-right-radius: 20px;
+}
+.chat-left {
+  display: flex;
+  align-items: flex-start;
+  justify-content: flex-start;
+  margin: 10px 0;
+}
+.chat-right {
+  display: flex;
+  align-items: flex-end;
+  justify-content: flex-end;
+  margin: 10px 0;
+}
+.card-left {
+  border-top-right-radius: 20px;
+  border-bottom-left-radius: 20px;
+  background-color: #007bff;
+  color: white;
+}
+.card-right p,
+.card-left p {
+  margin-bottom: 0;
+}
+.time {
+  font-size: 10px;
+  color: gray;
+}
+.time.left {
+  color: white;
 }
 </style>

@@ -2,6 +2,7 @@ import Vue from 'vue'
 import VueRouter from 'vue-router'
 import Home from '../views/Home.vue'
 import Login from '../views/Login.vue'
+import Activation from '../views/Activation.vue'
 import store from '../store'
 
 Vue.use(VueRouter)
@@ -12,6 +13,11 @@ const routes = [
     name: 'Login',
     component: Login,
     meta: { requiresVisitor: true }
+  },
+  {
+    path: '/activate/:id',
+    name: 'Activation',
+    component: Activation
   },
   {
     path: '/',
@@ -30,7 +36,7 @@ const router = new VueRouter({
 router.beforeEach((to, from, next) => {
   if (to.matched.some(record => record.meta.requiresAuth)) {
     if (!store.getters.isLogin) {
-      next({ path: '/login' })
+      next({ path: './login' })
     } else {
       next()
     }
