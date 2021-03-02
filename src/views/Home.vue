@@ -196,7 +196,7 @@
 import ListFriends from '../components/ListFriends.vue'
 import Profile from '../components/Profile.vue'
 import ProfileFriend from '../components/ProfileFriend.vue'
-// import io from 'socket.io-client'
+import io from 'socket.io-client'
 import { mapActions, mapGetters, mapMutations } from 'vuex'
 export default {
   name: 'Home',
@@ -207,6 +207,7 @@ export default {
   },
   data() {
     return {
+      env: process.env.VUE_APP_BASE_URL,
       show: true,
       search: {
         text: null
@@ -216,26 +217,23 @@ export default {
         user_email: null,
         user_id: null
       },
-      // coordinate: {}
       coordinate: {
         lat: 10,
         lng: 10
       },
-      // socket: io('http://localhost:3000'),
+      socket: io('http://localhost:3010'),
       username: '',
-      // msg: '',
       messages: [],
-      room: '',
-      oldRoom: '',
-      typing: {
-        isTyping: false
-      },
+      notif: [],
+      usernamee: null,
       chat: {
         id_room_gen: null,
+        oldRoom: null,
         id_sender: null,
         id_receiver: null,
         photo: null,
         user_name: null,
+        created_at: null,
         msg: ''
       }
     }
@@ -255,10 +253,11 @@ export default {
     this.$getLocation({ enableHighAccuracy: true })
       .then(coordinates => {
         this.coordinate = {
-          lat: coordinates.lat,
-          lng: coordinates.lng
+          lat: parseFloat(coordinates.lat),
+          lng: parseFloat(coordinates.lng)
         }
         const dataPayload = {}
+        console.log(this.coordinate.lng)
         dataPayload.coordinate = this.coordinate
         dataPayload.user_id = this.user.user_id
         this.editLocation(dataPayload)
@@ -271,6 +270,29 @@ export default {
     this.showRoom(this.user.user_id)
     this.data.user_id = this.user.user_id
     console.log(this.data)
+    this.socket.on('chatMessage', data => {
+      this.chats.push(data)
+    })
+    console.log('created()')
+    console.log(this.chats)
+    // showNotif
+    // const notif = []
+    // this.showNotif(this.user.user_id).then(result => {
+    //   console.log(result.data.data)
+    //   notif.push(result.data.data)
+    // })
+    // this.socket.emit('notif', notif)
+    // this.socket.on('notifs', data => {
+    //   data.forEach(el => {
+    //     console.log(el.user_name)
+    //     this.usernamee = el.user_name
+    //     this.makeToast('primary')
+    //   })
+    // this.showNotif(this.user.user_id).then(result => {
+    //   notif.push(result.data.data)
+    // })
+    // this.socket.emit('notif', notif)
+    // })
   },
   methods: {
     ...mapActions([
@@ -281,7 +303,9 @@ export default {
       'showRoom',
       'showChat',
       'editLocation',
-      'postChat'
+      'postChat',
+      'showNotif',
+      'changeStatus'
     ]),
     ...mapMutations([
       'setdataFriend',
@@ -367,26 +391,54 @@ export default {
       this.chat.id_receiver = c
       this.chat.user_name = d
       this.chat.photo = e
-      // this.data.user_email = this.profileFriend.user_email
-      // this.addFriend(this.data).then(result => {
-      //   this.message = result.data.message
-      //   this.$swal.fire({
-      //     icon: 'success',
-      //     title:
-      //       '<span style="font-family: cursive;">' + this.message + '<span>',
-      //     showConfirmButton: false,
-      //     timer: 3000
-      //   })
-      // })
+      // const payload = {}
+      // id_room_gen, id_receiver
+      // payload.id_room_gen = this.chat.id_room_gen
+      // payload.id_receiver = this.user.user_id
+      // this.changeStatus(payload)
+
       this.showChat(this.chat.id_room_gen)
       this.setdataFriend(this.chat)
       this.showProfileFriend(this.chat.id_receiver)
       this.statusRightPart()
+      if (this.chat.oldRoom) {
+        this.socket.emit('changeRoom', {
+          id_sender: this.chat.id_sender,
+          id_room_gen: this.chat.id_room_gen,
+          oldRoom: this.chat.oldRoom
+        })
+        this.chat.oldRoom = this.chat.id_room_gen
+      } else {
+        this.socket.emit('joinRoom', {
+          id_sender: this.chat.id_sender,
+          id_room_gen: this.chat.id_room_gen
+        })
+
+        this.chat.oldRoom = this.chat.id_room_gen
+      }
     },
     sendMessage() {
       // id_room_gen, id_sender, id_receiver, msg
-      this.postChat(this.chat)
-      this.chat.msg = ''
+      if (this.chat.msg) {
+        this.postChat(this.chat).then(result => {
+          console.log(result.data.data.created_at)
+          this.chat.created_at = result.data.data.created_at
+          // 2021-03-01T21:37:07+07:00
+          const datetime = this.chat.created_at.split('+').join('.')
+          this.chat.created_at = datetime
+          console.log(datetime)
+          console.log(this.chat)
+          this.socket.emit('roomMessage', this.chat)
+          this.chat.msg = ''
+        })
+      }
+    },
+    makeToast(variant = null) {
+      this.$bvToast.toast(`You've got new message from ${this.usernamee}`, {
+        title: 'HiApp',
+        variant: variant,
+        solid: true
+      })
     }
   }
 }

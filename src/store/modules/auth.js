@@ -11,6 +11,7 @@ export default {
     dataFriend: {},
     rooms: [],
     chats: [],
+    notifs: [],
     photo: '',
     image: '',
     coordinate: {},
@@ -41,6 +42,11 @@ export default {
       state.chats = payload.data
       console.log(state.chats)
     },
+    // setNotif
+    setNotif(state, payload) {
+      state.chats = payload.data
+      console.log(state.notifs)
+    },
     setdataFriend(state, payload) {
       state.dataFriend = payload
       console.log(state.dataFriend)
@@ -53,6 +59,7 @@ export default {
       state.user = {}
       state.rooms = [],
       state.chats = [],
+      state.notifs = [],
       state.profileFriend = {},
       state.dataFriend = {}
       state.userId = null
@@ -250,6 +257,19 @@ export default {
           })
       })
     },
+    showNotif(context, payload) {
+      return new Promise((resolve, reject) => {
+        axios
+          .get(`${process.env.VUE_APP_BASE_URL}/room/getnotif/${payload}`)
+          .then(result => {
+            context.commit('setNotif', result.data)
+            resolve(result)
+          })
+          .catch(error => {
+            reject(error)
+          })
+      })
+    },
     postRoom(context, payload) {
       return new Promise((resolve, reject) => {
         axios
@@ -266,6 +286,18 @@ export default {
       return new Promise((resolve, reject) => {
         axios
           .post(`${process.env.VUE_APP_BASE_URL}/room/postChat`, payload)
+          .then(result => {
+            resolve(result)
+          })
+          .catch(error => {
+            reject(error)
+          })
+      })
+    },
+    changeStatus(context, payload) {
+      return new Promise((resolve, reject) => {
+        axios
+          .patch(`${process.env.VUE_APP_BASE_URL}/room/changeStatus`, payload)
           .then(result => {
             resolve(result)
           })

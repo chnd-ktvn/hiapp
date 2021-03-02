@@ -62,14 +62,6 @@
     <p style="text-align: center;">
       Joined since {{ profileFriend.created_at.split('T')[0] }}
     </p>
-    <!-- <b-img
-      :src="
-        chat.photo === ''
-          ? require('./../assets/cat-hi.png')
-          : `http://localhost:3010/` + chat.photo
-      "
-      class="img"
-    ></b-img> -->
   </div>
 </template>
 <script>
@@ -94,8 +86,8 @@ export default {
   created() {
     console.log(this.chat)
     this.showProfileFriend(this.chat.id_receiver)
-    this.location.lat = this.profileFriend.lat
-    this.location.lng = this.profileFriend.lng
+    this.location.lat = parseFloat(this.profileFriend.lat)
+    this.location.lng = parseFloat(this.profileFriend.lng)
     console.log(this.location.lng)
   },
   methods: {

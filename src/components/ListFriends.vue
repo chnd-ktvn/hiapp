@@ -38,6 +38,13 @@
 import { mapActions, mapMutations, mapGetters } from 'vuex'
 export default {
   name: 'ListFriends',
+  computed: {
+    ...mapGetters({
+      friends: 'dataFriend',
+      rooms: 'dataRoom',
+      user: 'dataUser'
+    })
+  },
   methods: {
     ...mapMutations(['statusChat']),
     ...mapActions(['postRoom', 'showRoom', 'showFriend']),
@@ -56,10 +63,10 @@ export default {
       if (roomWithIdReceiver === null) {
         this.postRoom(data)
           .then(result => {
+            roomWithIdReceiver = null
             console.log(result)
             this.showRoom(this.user.user_id)
             this.statusChat()
-            roomWithIdReceiver = null
           })
           .catch(error => {
             console.log(error)
@@ -69,13 +76,6 @@ export default {
         this.statusChat()
       }
     }
-  },
-  computed: {
-    ...mapGetters({
-      friends: 'dataFriend',
-      rooms: 'dataRoom',
-      user: 'dataUser'
-    })
   },
   created() {
     this.showFriend(this.data.user_id)
