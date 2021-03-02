@@ -252,14 +252,21 @@ export default {
   created() {
     this.$getLocation({ enableHighAccuracy: true })
       .then(coordinates => {
-        this.coordinate = {
-          lat: parseFloat(coordinates.lat),
-          lng: parseFloat(coordinates.lng)
-        }
+        // if (coordinates.accuracy <= 100) {
+          console.log(coordinates)
+          this.coordinate = {
+            lat: coordinates.lat,
+            lng: coordinates.lng
+          }
+        // } else {
+        //   this.$getLocation()
+        // }
+        console.log(coordinates)
         const dataPayload = {}
         console.log(this.coordinate.lng)
         dataPayload.coordinate = this.coordinate
         dataPayload.user_id = this.user.user_id
+        console.log(typeof dataPayload.user_id)
         this.editLocation(dataPayload)
       })
       .catch(error => {

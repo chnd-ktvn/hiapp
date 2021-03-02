@@ -107,11 +107,11 @@
         map-type-id="terrain"
         style="width: 230px; height: 200px; margin: 0 auto; margin-bottom: 5vh;"
       >
+      <!-- @click="clickMarker" -->
         <GmapMarker
           :position="location"
           :clickable="true"
           :draggable="true"
-          @click="clickMarker"
           icon="https://img.icons8.com/color/48/000000/map-pin.png"
         />
       </GmapMap>
@@ -145,7 +145,11 @@ export default {
       show: false,
       showPhoto: true,
       message: null,
-      statusDelete: false
+      statusDelete: false,
+      location: {
+        lat: 10,
+        lng: 10
+      }
     }
   },
   computed: {
@@ -158,7 +162,11 @@ export default {
     })
   },
   created() {
-    this.showProfile(this.user.user_id)
+    // this.showProfile(this.user.user_id)
+    this.showProfile(this.user.user_id).then(result => {
+      this.location.lat = parseFloat(result.data.data[0].lat)
+      this.location.lng = parseFloat(result.data.data[0].lng)
+    })
   },
   methods: {
     ...mapActions(['showProfile', 'editProfile', 'deletePhotoProfile']),
@@ -174,6 +182,7 @@ export default {
         lat: position.latLng.lat(),
         lng: position.latLng.lng()
       }
+      console.log(this.coordinate)
     },
     onPrivacy() {
       this.message = 'Coming Soon'

@@ -72,8 +72,8 @@ export default {
     return {
       env: process.env.VUE_APP_BASE_URL,
       location: {
-        lat: 10,
-        lng: 10
+        lat: 10.5,
+        lng: 10.5
       }
     }
   },
@@ -84,11 +84,10 @@ export default {
     })
   },
   created() {
-    console.log(this.chat)
-    this.showProfileFriend(this.chat.id_receiver)
-    this.location.lat = parseFloat(this.profileFriend.lat)
-    this.location.lng = parseFloat(this.profileFriend.lng)
-    console.log(this.location.lng)
+    this.showProfileFriend(this.chat.id_receiver).then(result => {
+      this.location.lat = parseFloat(result.data.data[0].lat)
+      this.location.lng = parseFloat(result.data.data[0].lng)
+    })
   },
   methods: {
     ...mapActions(['showProfileFriend'])
