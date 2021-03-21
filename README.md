@@ -22,7 +22,7 @@
 
 1. <a href="https://nodejs.org/en/download/">Node Js</a>
 2. Node_modules `npm install` or `yarn install`
-3. Backend API #Hi App [`here`](https://https://github.com/chnd-ktvn/hiApp-Backend)
+3. Backend API #Hi App [`here`](https://github.com/chnd-ktvn/hiApp-Backend)
 
 ## Getting Started
 
