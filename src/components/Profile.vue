@@ -129,9 +129,6 @@
         </p>
       </div>
     </b-form>
-    <!-- <b-button style="margin: 5vh 0;" @click="onEdit" block pill
-      >Edit data</b-button
-    > -->
   </b-container>
 </template>
 <script>
@@ -162,7 +159,6 @@ export default {
     })
   },
   created() {
-    // this.showProfile(this.user.user_id)
     this.showProfile(this.user.user_id).then(result => {
       this.location.lat = parseFloat(result.data.data[0].lat)
       this.location.lng = parseFloat(result.data.data[0].lng)

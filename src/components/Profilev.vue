@@ -99,17 +99,6 @@
           placeholder="Phone Number"
         ></b-form-input>
       </b-input-group>
-      <!-- <b-input-group v-b-tooltip.hover title="Email" size="sm" class="mb-2">
-        <b-input-group-prepend v-b-tooltip.hover title="Email Address" is-text>
-          <b-icon-envelope-fill style="color: #007bff;"></b-icon-envelope-fill>
-        </b-input-group-prepend>
-        <b-form-input
-          v-model="profile.user_email"
-          type="email"
-          placeholder="Email Address"
-          disabled
-        ></b-form-input>
-      </b-input-group> -->
       <b-input-group v-b-tooltip.hover title="Bio" size="sm" class="mb-2">
         <b-input-group-prepend is-text>
           <b-icon-book-half style="color: #007bff;"></b-icon-book-half>

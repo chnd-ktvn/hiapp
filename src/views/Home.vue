@@ -85,7 +85,7 @@
                 :src="
                   item.user_photo === ''
                     ? require('./../assets/cat-hi.png')
-                    : `http://localhost:3010/` + item.user_photo
+                    : `${env}/` + item.user_photo
                 "
                 class="mr-3 avatar"
                 rounded="lg"
@@ -107,7 +107,7 @@
                   :src="
                     chat.photo === ''
                       ? require('./../assets/cat-hi.png')
-                      : `http://localhost:3010/` + chat.photo
+                      : `${env}/` + chat.photo
                   "
                   class="img"
                 ></b-img>
@@ -253,11 +253,11 @@ export default {
     this.$getLocation({ enableHighAccuracy: true })
       .then(coordinates => {
         // if (coordinates.accuracy <= 100) {
-          console.log(coordinates)
-          this.coordinate = {
-            lat: coordinates.lat,
-            lng: coordinates.lng
-          }
+        console.log(coordinates)
+        this.coordinate = {
+          lat: coordinates.lat,
+          lng: coordinates.lng
+        }
         // } else {
         //   this.$getLocation()
         // }
@@ -349,6 +349,8 @@ export default {
                   showConfirmButton: false,
                   timer: 3000
                 })
+                this.showFriend(this.data.user_id)
+                this.statusList()
               })
               .catch(error => {
                 this.message = error.response.data.message

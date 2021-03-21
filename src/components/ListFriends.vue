@@ -19,7 +19,7 @@
           :src="
             item.user_photo === ''
               ? require('./../assets/cat-hi.png')
-              : `http://localhost:3010/` + item.user_photo
+              : `${env}/` + item.user_photo
           "
           class="mr-3"
           rounded="lg"
@@ -38,6 +38,11 @@
 import { mapActions, mapMutations, mapGetters } from 'vuex'
 export default {
   name: 'ListFriends',
+  data() {
+    return {
+      env: process.env.VUE_APP_BASE_URL
+    }
+  },
   computed: {
     ...mapGetters({
       friends: 'dataFriend',
@@ -61,6 +66,7 @@ export default {
       })
       console.log(roomWithIdReceiver)
       if (roomWithIdReceiver === null) {
+        roomWithIdReceiver = null
         this.postRoom(data)
           .then(result => {
             roomWithIdReceiver = null
@@ -78,7 +84,13 @@ export default {
     }
   },
   created() {
-    this.showFriend(this.data.user_id)
+    this.showFriend(this.user.user_id)
+    // this.rooms.forEach(el => {
+    //     // if (el.receiver === b) {
+    //       console.log(el)
+    //       // roomWithIdReceiver = el.receiver
+    //     // }
+    //   })
   }
 }
 </script>

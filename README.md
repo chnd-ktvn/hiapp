@@ -1,14 +1,17 @@
-<h1 align='center'>Vue JS - #Hi App</h1>
+<h1 align='center'>Vue JS - Hi App</h1>
   <p align="center">
+    <a href="https://https://hiapp.netlify.app/">View Demo</a>
     ·
     <a href="https://github.com/chnd-ktvn/hiApp">Report Bug</a>
     ·
     <a href="https://github.com/chnd-ktvn/hiApp">Request Feature</a>
   </p>
 
+![Image Banner](https://raw.githubusercontent.com/chnd-ktvn/hiApp/master/src/assets/hiappview.jpg)
+
 ## About The Project
 
-#background_projek.
+### Pronounced like high and hi, Hi APP is simple messaging app that connects people around the world with various features such as realtime private chat.
 
 ## Built With
 
@@ -23,13 +26,13 @@
 
 ## Getting Started
 
-1. Download this Project or you can type `git clone #link_git`
+1. Download this Project or you can type `git clone https://github.com/chnd-ktvn/hiApp.git`
 2. Open app's directory in CMD or Terminal
 3. Type `npm install` or `yarn install`
 4. Add .env file at root folder project
 
 ```sh
-VUE_APP_BASE_URL = [Backend API]
+VUE_APP_BASE_URL = localhost:3010
 ```
 
 5. Type `npm run serve`
