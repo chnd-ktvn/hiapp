@@ -1,6 +1,6 @@
 <h1 align='center'>Vue JS - Hi App</h1>
   <p align="center">
-    <a href="https://https://hiapp.netlify.app/">View Demo</a>
+    <a href="https://hiapp.netlify.app">View Demo</a>
     ·
     <a href="https://github.com/chnd-ktvn/hiApp">Report Bug</a>
     ·
