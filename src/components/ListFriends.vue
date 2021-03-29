@@ -19,7 +19,7 @@
           :src="
             item.user_photo === ''
               ? require('./../assets/cat-hi.png')
-              : `${env}/` + item.user_photo
+              : `${env}/fileuploads/` + item.user_photo
           "
           class="mr-3"
           rounded="lg"

@@ -12,7 +12,7 @@
         profileFriend.user_photo === '' ||
         profileFriend.user_photo === undefined
           ? require('./../assets/cat-hi.png')
-          : `${env}/` + profileFriend.user_photo
+          : `${env}/fileuploads/` + profileFriend.user_photo
       "
       class="preview"
     ></b-img>

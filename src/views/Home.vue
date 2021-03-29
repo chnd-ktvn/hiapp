@@ -85,7 +85,7 @@
                 :src="
                   item.user_photo === ''
                     ? require('./../assets/cat-hi.png')
-                    : `${env}/` + item.user_photo
+                    : `${env}/fileuploads/` + item.user_photo
                 "
                 class="mr-3 avatar"
                 rounded="lg"
@@ -107,7 +107,7 @@
                   :src="
                     chat.photo === ''
                       ? require('./../assets/cat-hi.png')
-                      : `${env}/` + chat.photo
+                      : `${env}/fileuploads/` + chat.photo
                   "
                   class="img"
                 ></b-img>
@@ -221,7 +221,16 @@ export default {
         lat: 10,
         lng: 10
       },
-      socket: io('http://localhost:3010'),
+      // socket: io('http://localhost:3010'),
+      // TAMBAHKAN SYNTAX YANG ADA DI DALAM INI
+      // =========================================
+      // socket: io.connect("https://backend-web6.fwebdev.online", {
+      //   path: "/api2/socket.io"
+      // }),
+      socket: io.connect("http://localhost:3010", {
+        path: "/api2/socket.io"
+      }),
+      // =========================================
       username: '',
       messages: [],
       notif: [],

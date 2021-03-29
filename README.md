@@ -25,7 +25,7 @@
 3. Backend API #Hi App [`here`](https://github.com/chnd-ktvn/hiApp-Backend)
 
 ## Getting Started
-
+ 
 1. Download this Project or you can type `git clone https://github.com/chnd-ktvn/hiApp.git`
 2. Open app's directory in CMD or Terminal
 3. Type `npm install` or `yarn install`

@@ -20,7 +20,7 @@
         :src="
           profile.user_photo === '' || profile.user_photo === undefined
             ? require('./../assets/cat-hi.png')
-            : `${env}/` + profile.user_photo
+            : `${env}/fileuploads/` + profile.user_photo
         "
         class="preview"
       ></b-img>
